@@ -1,43 +1,30 @@
-def chatbot_response(user_input):
+from flask import Flask, render_template, request, jsonify
 
+app = Flask(__name__)
+
+def chatbot_response(user_input):
     user_input = user_input.lower()
 
-    # Greeting
     if "hello" in user_input or "hi" in user_input:
-        return "Hello! 😊 How can I help you today?"
+        return "Hello! 😊 How can I help you?"
 
-    # Name
     elif "your name" in user_input:
-        return "I'm a chatbot created for CODSOFT Internship Task 1."
+        return "I am a web-based chatbot created for CODSOFT Task 1."
 
-    # Asking how bot is
-    elif "how are you" in user_input:
-        return "I'm doing great, thanks for asking! 🤖"
+    elif "bye" in user_input:
+        return "Goodbye! 👋"
 
-    # AI related
-    elif "what is ai" in user_input or "artificial intelligence" in user_input:
-        return "AI means Artificial Intelligence, where machines can think and make decisions like humans."
-
-    # Creator information
-    elif "who created you" in user_input:
-        return "I was created by Niranjana as part of the CODSOFT AI internship."
-
-    # Goodbye
-    elif "bye" in user_input or "exit" in user_input:
-        return "Goodbye! 👋 Have a great day!"
-
-    # Default fallback
     else:
-        return "Sorry, I didn't understand that. ❓ Try asking something else!"
+        return "Sorry, I didn't understand that. Try again 🤔"
 
+@app.route("/")
+def home():
+    return render_template("index.html")
 
-print("🤖 CODSOFT AI Chatbot")
-print("Type 'bye' to exit.\n")
+@app.route("/get", methods=["POST"])
+def get_bot_response():
+    user_text = request.form["msg"]
+    return jsonify({"response": chatbot_response(user_text)})
 
-while True:
-    user_text = input("You: ")
-    bot_reply = chatbot_response(user_text)
-    print("Bot:", bot_reply)
-
-    if "bye" in user_text.lower():
-        break
+if __name__ == "__main__":
+    app.run(debug=True)
